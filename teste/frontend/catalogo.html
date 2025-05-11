@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Catálogo de Livros - Book Swap</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #fafafa;
+    }
+    header {
+      background-color: #fff;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #c0392b;
+    }
+    .btns a {
+      text-decoration: none;
+      margin-left: 16px;
+      color: #fff;
+      background-color: #c0392b;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    main {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    h2 {
+      color: #c0392b;
+      margin-bottom: 10px;
+    }
+    .livro-card {
+      border: 1px solid #ddd;
+      border-left: 4px solid #c0392b;
+      background-color: #fff;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      padding: 16px;
+    }
+    .livro-card strong {
+      font-size: 16px;
+      color: #333;
+    }
+    .livro-card span {
+      display: block;
+      margin-top: 4px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">BOOK SWAP</div>
+  <div class="btns">
+    <a href="login.html">Entrar</a>
+    <a href="cadastro.html">Cadastrar-se</a>
+  </div>
+</header>
+
+<main>
+  <h2>Catálogo de Livros</h2>
+  <div id="catalogo">
+    <p>Carregando livros disponíveis...</p>
+  </div>
+</main>
+
+<script>
+// Assim que a página carregar, buscar os livros do backend
+async function carregarLivros() {
+  const container = document.getElementById("catalogo");
+
+  try {
+    const response = await // Aqui fazemos uma requisição HTTP GET para a API do backend
+    // É importante usar o mesmo host (localhost ou 127.0.0.1) que o Live Server está usando
+    fetch("http://localhost:8080/livros/publicos");
+
+    if (!response.ok) {
+      container.innerHTML = "<p>Erro ao carregar livros. Tente novamente mais tarde.</p>";
+      return;
+    }
+
+    // Convertemos a resposta (em JSON) para um array de objetos (livros)
+    const livros = await response.json();
+
+    if (livros.length === 0) {
+      container.innerHTML = "<p>Nenhum livro disponível no momento.</p>";
+      return;
+    }
+
+    // Para cada livro retornado pelo backend, geramos um card HTML simples
+    container.innerHTML = livros.map(livro =>`
+      <div class="livro-card">
+        <strong>${livro.titulo}</strong>
+        <span>Autor: ${livro.autor}</span>
+        <span>Categoria: ${livro.categoria}</span>
+        <span>Preço: R$ ${livro.preco.toFixed(2)}</span>
+        <span>Modalidade: ${livro.modalidade}</span>
+      </div>
+    `).join("");
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = "<p>Erro ao se conectar com o servidor.</p>";
+  }
+}
+
+carregarLivros();
+</script>
+
+</body>
+</html>
