@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BookSwap</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 320px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 25px;
+            color: #1c1e21;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #606770;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px #e7f3ff;
+            outline: none;
+        }
+        button {
+            background-color: #1877f2;
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #166fe5;
+        }
+        .message-area {
+            margin-top: 15px;
+            font-size: 14px;
+            min-height: 20px; /* Para evitar que o layout salte */
+        }
+        .message-area.success {
+            color: green;
+        }
+        .message-area.error {
+            color: red;
+        }
+        .register-link {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .register-link a {
+            color: #1877f2;
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h1>BookSwap</h1>
+    <form id="loginForm" method="POST" action="/perform_login">
+        <div class="form-group">
+            <label for="username">Email:</label>
+            <input type="email" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Entrar</button>
+        <div id="messageArea" class="message-area">
+        </div>
+    </form>
+    <div class="register-link">
+        Não tem uma conta? <a href="cadastro.html">Cadastre-se</a>
+    </div>
+</div>
+
+<script>
+    // Script para exibir mensagens de erro/logout do Spring Security
+    document.addEventListener('DOMContentLoaded', function() {
+        const params = new URLSearchParams(window.location.search);
+        const messageArea = document.getElementById('messageArea');
+        if (params.has('error')) {
+            messageArea.textContent = 'Email ou senha inválidos. Tente novamente.';
+            messageArea.className = 'message-area error';
+        }
+        if (params.has('logout')) {
+            messageArea.textContent = 'Você saiu com sucesso.';
+            messageArea.className = 'message-area success';
+        }
+    });
+</script>
+
+</body>
+</html>

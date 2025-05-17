@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trocas - BookSwap</title>
+  <style>
+    /* Estilos comuns (idealmente, mova para um arquivo CSS externo e compartilhado) */
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
+    .navbar { background-color: #fff; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+    .navbar .logo { font-size: 24px; font-weight: bold; color: #1877f2; text-decoration: none; }
+    .navbar .nav-links a { color: #606770; text-decoration: none; margin-left: 20px; font-size: 16px; }
+    .navbar .nav-links a:hover, .navbar .nav-links a.active { color: #1877f2; font-weight: bold; }
+    .navbar .nav-links form { display: inline; margin-left: 20px; } /* Para o botão de logout */
+    .navbar .nav-links form a { font-size: 16px; }
+
+    .container { padding: 30px; max-width: 900px; margin: 20px auto; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h1 { color: #1c1e21; margin-bottom: 20px; }
+    .tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
+    .tab-button { padding: 10px 20px; cursor: pointer; border: none; background: none; font-size: 16px; outline: none; }
+    .tab-button.active { color: #1877f2; border-bottom: 2px solid #1877f2; font-weight: bold;}
+    .tab-content { display: none; /* Escondido por padrão, será mostrado por JS */ }
+    .tab-content.active { display: block; } /* Mostra a aba ativa */
+    .trade-list { list-style: none; padding: 0; }
+    .trade-item { background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 6px; }
+    .trade-item h3 { margin: 0 0 10px 0; font-size: 18px;}
+    .trade-item p { margin: 5px 0; font-size: 14px; }
+    .trade-item .status-pendente { color: #ffc107; font-weight: bold; } /* Amarelo */
+    .trade-item .status-aceita { color: #28a745; font-weight: bold; } /* Verde */
+    .trade-item .status-recusada { color: #dc3545; font-weight: bold; } /* Vermelho */
+    .trade-item .actions button { margin-top:10px; margin-right: 5px; padding: 8px 12px; border:none; border-radius:4px; cursor:pointer; font-size: 14px;}
+    .btn-success { background-color: #28a745; color:white; }
+    .btn-danger { background-color: #dc3545; color:white; }
+    .btn-info { background-color: #17a2b8; color:white; }
+    .btn-secondary { background-color: #6c757d; color:white; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/cliente/home.html" class="logo">BookSwap</a>
+  <div class="nav-links">
+    <a href="/cliente/meus_livros.html">Meus Livros</a>
+    <a href="/cliente/perfis.html">Perfis</a>
+    <a href="/cliente/troca.html" class="active">Troca</a>
+    <form id="logoutFormPage" method="POST" action="/logout" style="display: inline;">
+      <a href="#" onclick="document.getElementById('logoutFormPage').submit(); return false;">Sair</a>
+    </form>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Minhas Trocas</h1>
+
+  <div class="tabs">
+    <button class="tab-button active" onclick="openTab(event, 'propostasRecebidas')">Propostas Recebidas</button>
+    <button class="tab-button" onclick="openTab(event, 'propostasEnviadas')">Propostas Enviadas</button>
+    <button class="tab-button" onclick="openTab(event, 'historicoTrocas')">Histórico</button>
+  </div>
+
+  <div id="propostasRecebidas" class="tab-content active">
+    <h2>Propostas Recebidas</h2>
+    <ul class="trade-list">
+      <li class="trade-item">
+        <h3>Troca por "A Revolução dos Bichos"</h3>
+        <p><strong>Usuário:</strong> João Silva</p>
+        <p><strong>Oferece:</strong> "1984" de George Orwell</p>
+        <p><strong>Seu livro:</strong> "A Revolução dos Bichos"</p>
+        <p><strong>Data da Proposta:</strong> 15/05/2025</p>
+        <p>Status: <span class="status-pendente">Pendente</span></p>
+        <div class="actions">
+          <button class="btn-success" onclick="alert('Aceitar proposta')">Aceitar</button>
+          <button class="btn-danger" onclick="alert('Recusar proposta')">Recusar</button>
+          <button class="btn-info" onclick="alert('Ver detalhes/chat')">Conversar</button>
+        </div>
+      </li>
+      <li class="trade-item">
+        <h3>Troca por "O Pequeno Príncipe"</h3>
+        <p><strong>Usuário:</strong> Carla Mendes</p>
+        <p><strong>Oferece:</strong> "Alice no País das Maravilhas"</p>
+        <p><strong>Seu livro:</strong> "O Pequeno Príncipe"</p>
+        <p><strong>Data da Proposta:</strong> 12/05/2025</p>
+        <p>Status: <span class="status-pendente">Pendente</span></p>
+        <div class="actions">
+          <button class="btn-success">Aceitar</button>
+          <button class="btn-danger">Recusar</button>
+          <button class="btn-info">Conversar</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div id="propostasEnviadas" class="tab-content">
+    <h2>Propostas Enviadas</h2>
+    <ul class="trade-list">
+      <li class="trade-item">
+        <h3>Troca por "O Hobbit"</h3>
+        <p><strong>Para:</strong> Maria Souza</p>
+        <p><strong>Você oferece:</strong> "O Silmarillion"</p>
+        <p><strong>Livro desejado:</strong> "O Hobbit"</p>
+        <p><strong>Data da Proposta:</strong> 10/05/2025</p>
+        <p>Status: <span class="status-aceita">Aceita</span></p>
+        <div class="actions">
+          <button class="btn-info" onclick="alert('Ver detalhes/chat')">Conversar</button>
+          <button class="btn-secondary" onclick="alert('Cancelar proposta - se aplicável')">Cancelar</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div id="historicoTrocas" class="tab-content">
+    <h2>Histórico de Trocas</h2>
+    <ul class="trade-list">
+      <li class="trade-item">
+        <h3>Troca de "Dom Casmurro" por "Memórias Póstumas de Brás Cubas"</h3>
+        <p><strong>Com:</strong> Pedro Almeida</p>
+        <p><strong>Data da Conclusão:</strong> 01/04/2025</p>
+        <p>Status: <span class="status-aceita">Concluída</span></p>
+        <div class="actions">
+          <button class="btn-secondary" onclick="alert('Ver detalhes da troca')">Ver Detalhes</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tab-content");
+      for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+          tabcontent[i].classList.remove("active");
+      }
+      tablinks = document.getElementsByClassName("tab-button");
+      for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].classList.remove("active");
+      }
+      document.getElementById(tabName).style.display = "block";
+      document.getElementById(tabName).classList.add("active");
+      evt.currentTarget.classList.add("active");
+  }
+  // Abrir a primeira aba por padrão ao carregar a página
+  document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('propostasRecebidas').style.display = 'block';
+      document.getElementById('propostasRecebidas').classList.add('active');
+      document.querySelector('.tab-button').classList.add('active'); // Ativa o primeiro botão
+  });
+
+  // TODO: Implementar JavaScript para buscar e exibir dados das trocas dinamicamente
+</script>
+
+</body>
+</html>
