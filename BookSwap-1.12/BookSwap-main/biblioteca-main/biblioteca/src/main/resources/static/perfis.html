@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfis - BookSwap</title>
+    <style>
+        /* Estilos comuns (copie do meus_livros.html ou centralize em um CSS) */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
+        .navbar { background-color: #fff; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .navbar .logo { font-size: 24px; font-weight: bold; color: #1877f2; text-decoration: none; }
+        .navbar .nav-links a { color: #606770; text-decoration: none; margin-left: 20px; font-size: 16px; }
+        .navbar .nav-links a:hover, .navbar .nav-links a.active { color: #1877f2; font-weight: bold; }
+        .container { padding: 30px; max-width: 900px; margin: 20px auto; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { color: #1c1e21; margin-bottom: 20px; }
+        .search-bar { margin-bottom: 20px; display: flex; gap: 10px; }
+        .search-bar input[type="text"] { flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+        .search-bar button { padding: 10px 15px; background-color: #1877f2; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .profile-card { background-color: #f9f9f9; border: 1px solid #ddd; padding: 20px; border-radius: 8px; text-align: center; }
+        .profile-card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; }
+        .profile-card h3 { margin: 10px 0 5px 0; font-size: 18px; }
+        .profile-card p { margin: 0; font-size: 14px; color: #606770; }
+        .profile-card .view-profile-btn {
+            margin-top: 15px;
+            padding: 8px 15px;
+            background-color: #1877f2;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="home.html" class="logo">BookSwap</a>
+    <div class="nav-links">
+        <a href="meus_livros.html">Meus Livros</a>
+        <a href="perfis.html" class="active">Perfis</a>
+        <a href="troca.html">Troca</a>
+        <a href="#" id="logoutButton">Sair</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Explorar Perfis</h1>
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Buscar usuários por nome ou email...">
+        <button id="searchButton">Buscar</button>
+    </div>
+
+    <div class="profile-grid" id="profileGrid">
+        <div class="profile-card">
+            <img src="https://via.placeholder.com/80" alt="Foto do Perfil"> <h3>Nome do Usuário</h3>
+            <p>Localização: Cidade, Estado</p>
+            <p>Livros para troca: 5</p>
+            <a href="#" class="view-profile-btn" onclick="alert('Ver perfil completo')">Ver Perfil</a>
+        </div>
+        <div class="profile-card">
+            <img src="https://via.placeholder.com/80" alt="Foto do Perfil">
+            <h3>Outro Usuário</h3>
+            <p>Localização: Outra Cidade</p>
+            <p>Livros para troca: 3</p>
+            <a href="#" class="view-profile-btn" onclick="alert('Ver perfil completo')">Ver Perfil</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('logoutButton')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('Funcionalidade de logout a ser implementada! Redirecionando para o login.');
+        window.location.href = 'login.html';
+    });
+
+    // TODO: Implementar JavaScript para buscar e exibir perfis
+    // const searchButton = document.getElementById('searchButton');
+    // const searchInput = document.getElementById('searchInput');
+    // const profileGrid = document.getElementById('profileGrid');
+
+    // function fetchProfiles(query = '') {
+    //     // Exemplo: fetch(`/api/perfis?q=${encodeURIComponent(query)}`)
+    //     // .then(response => response.json())
+    //     // .then(data => {
+    //     //     profileGrid.innerHTML = ''; // Limpar resultados
+    //     //     if (data.length > 0) {
+    //     //         data.forEach(perfil => {
+    //     //             const card = document.createElement('div');
+    //     //             card.className = 'profile-card';
+    //     //             // ... popular o card com dados do perfil ...
+    //     //             profileGrid.appendChild(card);
+    //     //         });
+    //     //     } else {
+    //     //         profileGrid.innerHTML = '<p>Nenhum perfil encontrado.</p>';
+    //     //     }
+    //     // })
+    //     // .catch(error => console.error('Erro ao buscar perfis:', error));
+    //     alert('Busca de perfis a ser implementada. Query: ' + query);
+    // }
+
+    // searchButton.addEventListener('click', () => fetchProfiles(searchInput.value));
+    // fetchProfiles(); // Carregar perfis iniciais (ou os mais populares, etc.)
+</script>
+
+</body>
+</html>

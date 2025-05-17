@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus Livros - BookSwap</title>
+  <style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        margin: 0;
+        background-color: #f0f2f5;
+        color: #333;
+    }
+    .navbar {
+        background-color: #fff;
+        padding: 15px 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .navbar .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1877f2;
+        text-decoration: none;
+    }
+    .navbar .nav-links a {
+        color: #606770;
+        text-decoration: none;
+        margin-left: 20px;
+        font-size: 16px;
+    }
+    .navbar .nav-links a:hover, .navbar .nav-links a.active {
+        color: #1877f2;
+        font-weight: bold;
+    }
+    .container {
+        padding: 30px;
+        max-width: 900px;
+        margin: 20px auto;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        color: #1c1e21;
+        margin-bottom: 20px;
+    }
+    .book-list {
+        list-style: none;
+        padding: 0;
+    }
+    .book-item {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .book-item h3 {
+        margin: 0 0 5px 0;
+        font-size: 18px;
+    }
+    .book-item p {
+        margin: 0;
+        font-size: 14px;
+        color: #606770;
+    }
+    .book-item .actions button {
+        padding: 8px 12px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .book-item .actions .btn-primary {
+        background-color: #1877f2;
+        color: white;
+    }
+    .book-item .actions .btn-secondary {
+        background-color: #e4e6eb;
+        color: #333;
+    }
+    .add-book-button {
+         background-color: #42b72a; /* Green */
+         color: white;
+         padding: 10px 15px;
+         border: none;
+         border-radius: 6px;
+         cursor: pointer;
+         font-size: 16px;
+         margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="home.html" class="logo">BookSwap</a>
+  <div class="nav-links">
+    <a href="meus_livros.html" class="active">Meus Livros</a>
+    <a href="perfis.html">Perfis</a>
+    <a href="troca.html">Troca</a>
+    <a href="#" id="logoutButton">Sair</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Meus Livros</h1>
+  <button class="add-book-button" onclick="alert('Funcionalidade de adicionar livro a ser implementada!')">Adicionar Novo Livro para Troca</button>
+
+  <h2>Livros que Ofereço para Troca</h2>
+  <ul class="book-list" id="livrosOferecidosList">
+    <li class="book-item">
+      <div>
+        <h3>O Senhor dos Anéis</h3>
+        <p>Autor: J.R.R. Tolkien</p>
+        <p>Status: Disponível para troca</p>
+      </div>
+      <div class="actions">
+        <button class="btn-secondary" onclick="alert('Editar livro')">Editar</button>
+        <button class="btn-primary" onclick="alert('Ver propostas')">Ver Propostas</button>
+      </div>
+    </li>
+  </ul>
+
+  <h2>Livros que Peguei Emprestado (Histórico)</h2>
+  <ul class="book-list" id="livrosEmprestadosList">
+    <li class="book-item">
+      <div>
+        <h3>Harry Potter e a Pedra Filosofal</h3>
+        <p>Autor: J.K. Rowling</p>
+        <p>Status: Devolvido em 10/05/2025</p>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" onclick="alert('Avaliar troca/usuário')">Avaliar</button>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<script>
+  document.getElementById('logoutButton')?.addEventListener('click', function(e) {
+      e.preventDefault();
+      alert('Funcionalidade de logout a ser implementada! Redirecionando para o login.');
+      window.location.href = 'login.html';
+  });
+
+  // TODO: Implementar JavaScript para buscar e exibir os livros do usuário
+  // fetch('/api/usuario/meus-livros') // Exemplo de endpoint
+  // .then(response => response.json())
+  // .then(data => {
+  //     const livrosOferecidosList = document.getElementById('livrosOferecidosList');
+  //     // Popular a lista de livros oferecidos
+  //     livrosOferecidosList.innerHTML = ''; // Limpar lista de exemplo
+  //     if (data.livrosOferecidos && data.livrosOferecidos.length > 0) {
+  //         data.livrosOferecidos.forEach(livro => {
+  //             const li = document.createElement('li');
+  //             li.className = 'book-item';
+  //             li.innerHTML = `
+  //                 <div>
+  //                     <h3>${livro.titulo}</h3>
+  //                     <p>Autor: ${livro.autor}</p>
+  //                     <p>Status: ${livro.statusTroca}</p>
+  //                 </div>
+  //                 <div class="actions">
+  //                     <button class="btn-secondary">Editar</button>
+  //                     <button class="btn-primary">Ver Propostas</button>
+  //                 </div>`;
+  //             livrosOferecidosList.appendChild(li);
+  //         });
+  //     } else {
+  //         livrosOferecidosList.innerHTML = '<li>Você ainda não adicionou livros para troca.</li>';
+  //     }
+  //     // Popular a lista de livros emprestados similarmente
+  // })
+  // .catch(error => console.error('Erro ao buscar meus livros:', error));
+</script>
+
+</body>
+</html>

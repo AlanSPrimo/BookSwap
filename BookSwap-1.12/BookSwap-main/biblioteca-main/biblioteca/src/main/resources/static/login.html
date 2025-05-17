@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BookSwap</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 320px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 25px;
+            color: #1c1e21;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #606770;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px #e7f3ff;
+            outline: none;
+        }
+        button {
+            background-color: #1877f2;
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #166fe5;
+        }
+        .message-area {
+            margin-top: 15px;
+            font-size: 14px;
+            min-height: 20px; /* Para evitar que o layout salte */
+        }
+        .message-area.success {
+            color: green;
+        }
+        .message-area.error {
+            color: red;
+        }
+        .register-link {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .register-link a {
+            color: #1877f2;
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h1>BookSwap</h1>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" required>
+        </div>
+        <button type="submit">Entrar</button>
+        <div id="messageArea" class="message-area"></div>
+    </form>
+    <div class="register-link">
+        Não tem uma conta? <a href="cadastro.html">Cadastre-se</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.getElementById('loginForm');
+        const messageArea = document.getElementById('messageArea');
+
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            messageArea.textContent = 'Processando...';
+            messageArea.className = 'message-area'; // Reset class
+
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            const dadosLogin = {
+                email: email,
+                senha: senha
+            };
+
+            fetch('/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dadosLogin)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Tenta pegar a mensagem de erro do corpo da resposta se for um erro HTTP
+                    return response.json().then(errData => {
+                        throw new Error(errData.mensagem || `Erro ${response.status}: ${response.statusText}`);
+                    }).catch(() => { // Se não conseguir parsear JSON do erro, lança erro genérico
+                        throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Dados recebidos:', data);
+                if (data.status === 'sucesso') {
+                    messageArea.textContent = data.mensagem || 'Login realizado com sucesso! Redirecionando...';
+                    messageArea.className = 'message-area success';
+                    // Redireciona para home.html após um pequeno delay para o usuário ver a mensagem
+                    setTimeout(function() {
+                        window.location.href = 'home.html';
+                    }, 1000); // Delay de 1 segundo
+                } else {
+                    // Trata casos onde data.status é 'erro' ou indefinido mas o HTTP foi OK (menos comum com as correções no backend)
+                    messageArea.textContent = data.mensagem || 'Falha no login. Verifique suas credenciais.';
+                    messageArea.className = 'message-area error';
+                }
+            })
+            .catch(error => {
+                console.error('Erro durante o login:', error);
+                messageArea.textContent = error.message || 'Erro ao conectar com o servidor.';
+                messageArea.className = 'message-area error';
+            });
+        });
+    });
+</script>
+</body>
+</html>

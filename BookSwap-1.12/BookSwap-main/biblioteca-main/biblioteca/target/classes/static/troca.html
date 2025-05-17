@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trocas - BookSwap</title>
+  <style>
+    /* Estilos comuns (copie do meus_livros.html ou centralize em um CSS) */
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
+    .navbar { background-color: #fff; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+    .navbar .logo { font-size: 24px; font-weight: bold; color: #1877f2; text-decoration: none; }
+    .navbar .nav-links a { color: #606770; text-decoration: none; margin-left: 20px; font-size: 16px; }
+    .navbar .nav-links a:hover, .navbar .nav-links a.active { color: #1877f2; font-weight: bold; }
+    .container { padding: 30px; max-width: 900px; margin: 20px auto; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h1 { color: #1c1e21; margin-bottom: 20px; }
+    .tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
+    .tab-button { padding: 10px 20px; cursor: pointer; border: none; background: none; font-size: 16px; }
+    .tab-button.active { color: #1877f2; border-bottom: 2px solid #1877f2; font-weight: bold;}
+    .trade-list { list-style: none; padding: 0; }
+    .trade-item { background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 6px; }
+    .trade-item h3 { margin: 0 0 10px 0; }
+    .trade-item p { margin: 5px 0; }
+    .trade-item .status-pendente { color: orange; }
+    .trade-item .status-aceita { color: green; }
+    .trade-item .status-recusada { color: red; }
+    .trade-item .actions button { margin-top:10px; margin-right: 5px; padding: 8px 12px; border:none; border-radius:4px; cursor:pointer; }
+    .btn-success { background-color: #42b72a; color:white; }
+    .btn-danger { background-color: #fa383e; color:white; }
+    .btn-secondary { background-color: #e4e6eb; color: #333; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="home.html" class="logo">BookSwap</a>
+  <div class="nav-links">
+    <a href="meus_livros.html">Meus Livros</a>
+    <a href="perfis.html">Perfis</a>
+    <a href="troca.html" class="active">Troca</a>
+    <a href="#" id="logoutButton">Sair</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Minhas Trocas</h1>
+
+  <div class="tabs">
+    <button class="tab-button active" onclick="openTab('propostasRecebidas')">Propostas Recebidas</button>
+    <button class="tab-button" onclick="openTab('propostasEnviadas')">Propostas Enviadas</button>
+    <button class="tab-button" onclick="openTab('historicoTrocas')">Histórico</button>
+  </div>
+
+  <div id="propostasRecebidas" class="tab-content">
+    <h2>Propostas Recebidas</h2>
+    <ul class="trade-list">
+      <li class="trade-item">
+        <h3>Troca por "A Revolução dos Bichos"</h3>
+        <p>Usuário: João Silva</p>
+        <p>Oferece: "1984" de George Orwell</p>
+        <p>Seu livro: "A Revolução dos Bichos"</p>
+        <p>Status: <span class="status-pendente">Pendente</span></p>
+        <div class="actions">
+          <button class="btn-success" onclick="alert('Aceitar proposta')">Aceitar</button>
+          <button class="btn-danger" onclick="alert('Recusar proposta')">Recusar</button>
+          <button class="btn-secondary" onclick="alert('Ver detalhes/chat')">Conversar</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div id="propostasEnviadas" class="tab-content" style="display:none;">
+    <h2>Propostas Enviadas</h2>
+    <ul class="trade-list">
+      <li class="trade-item">
+        <h3>Troca por "O Hobbit"</h3>
+        <p>Para: Maria Souza</p>
+        <p>Você oferece: "O Silmarillion"</p>
+        <p>Livro desejado: "O Hobbit"</p>
+        <p>Status: <span class="status-aceita">Aceita</span></p>
+        <div class="actions">
+          <button class="btn-secondary" onclick="alert('Ver detalhes/chat')">Conversar</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div id="historicoTrocas" class="tab-content" style="display:none;">
+    <h2>Histórico de Trocas</h2>
+    <ul class="trade-list">
+    </ul>
+  </div>
+
+</div>
+
+<script>
+  document.getElementById('logoutButton')?.addEventListener('click', function(e) {
+      e.preventDefault();
+      alert('Funcionalidade de logout a ser implementada! Redirecionando para o login.');
+      window.location.href = 'login.html';
+  });
+
+  function openTab(tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tab-content");
+      for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tab-button");
+      for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      event.currentTarget.className += " active";
+  }
+  // Abrir a primeira aba por padrão
+  document.addEventListener('DOMContentLoaded', () => openTab('propostasRecebidas'));
+
+
+  // TODO: Implementar JavaScript para buscar e exibir dados das trocas
+  // Exemplo: fetch('/api/trocas/recebidas') e popular a lista correspondente
+</script>
+
+</body>
+</html>
