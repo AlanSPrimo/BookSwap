@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Meu Perfil - BookSwap</title>
+    <link rel="stylesheet" href="../style/style.css" />
+    <style>
+        /* Mesmo layout da home */
+        .side-navbar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 220px;
+          height: 100vh;
+          background-color: #fff;
+          border-right: 2px solid #eee;
+          padding-top: 30px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+          z-index: 100;
+        }
+
+        .side-navbar .logo img {
+          width: 120px;
+          height: auto;
+          margin-bottom: 40px;
+        }
+
+        .side-navbar ul {
+          list-style: none;
+          padding: 0;
+          width: 100%;
+          text-align: center;
+        }
+
+        .side-navbar ul li {
+          margin-bottom: 20px;
+        }
+
+        .side-navbar ul li a {
+          display: block;
+          padding: 12px;
+          color: #333;
+          font-weight: bold;
+          text-decoration: none;
+          transition: background-color 0.2s, color 0.2s;
+        }
+
+        .side-navbar ul li a:hover {
+          background-color: #f9f9f9;
+          color: #d9534f;
+        }
+
+        .side-navbar ul li a.active {
+          background-color: #ffe8e6;
+          color: #d9534f;
+          border-left: 4px solid #d9534f;
+        }
+
+        .content-wrapper {
+          margin-left: 220px;
+          padding: 40px 30px;
+        }
+
+        .section-title {
+          font-size: 24px;
+          font-weight: bold;
+          color: #d9534f;
+          margin-bottom: 20px;
+        }
+
+        .perfil-form {
+          background-color: #fff;
+          padding: 30px;
+          border-radius: 10px;
+          box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+          max-width: 500px;
+        }
+
+        .perfil-form label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: bold;
+          color: #444;
+        }
+
+        .perfil-form input {
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 20px;
+          border: 2px solid #ddd;
+          border-radius: 8px;
+          font-size: 14px;
+        }
+
+        .perfil-form input:focus {
+          border-color: #d9534f;
+          outline: none;
+        }
+
+        .perfil-form .btn-submit {
+          background-color: #d9534f;
+          color: white;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 8px;
+          font-weight: bold;
+          cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR LATERAL -->
+<nav class="side-navbar">
+    <div class="logo">
+        <a href="/cliente/home.html">
+            <img src="../Image/logo-png.png" alt="Book Swap Logo">
+        </a>
+    </div>
+    <ul>
+        <li><a href="home.html">Todos os Livros</a></li>
+        <li><a href="meus_livros.html">Meus Livros</a></li>
+        <li><a href="perfis.html" class="active">Meu perfil</a></li>
+        <li><a href="troca.html">Troca</a></li>
+        <li>
+            <form id="logoutForm" method="POST" action="/logout">
+                <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;">Sair</a>
+            </form>
+        </li>
+    </ul>
+</nav>
+
+<!-- CONTEÚDO PRINCIPAL -->
+<div class="content-wrapper">
+    <h1 class="section-title">Meu Perfil</h1>
+
+    <form class="perfil-form">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" placeholder="Nome do usuário" disabled>
+
+        <label for="email">E-mail</label>
+        <input type="email" id="email" placeholder="usuario@email.com" disabled>
+
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" placeholder="*********" disabled>
+
+        <button type="button" class="btn-submit" disabled>Editar perfil (em breve)</button>
+    </form>
+</div>
+
+</body>
+</html>

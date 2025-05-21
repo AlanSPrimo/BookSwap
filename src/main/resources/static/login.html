@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login - Book Swap</title>
+    <link rel="stylesheet" href="style/style.css" />
+</head>
+<body class="signup-page">
+
+<div class="login-container">
+    <h2>Acesse sua conta!</h2>
+
+    <form id="loginForm" method="POST" action="/perform_login">
+        <label for="username">E-mail</label>
+        <input type="email" id="username" name="username" required />
+
+        <label for="password">Senha</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="submit" class="btn primary">Entrar</button>
+
+        <div id="messageArea" class="message-area" style="margin-top: 10px;"></div>
+    </form>
+
+    <p class="register-link">Não possui uma conta? <a href="cadastro.html">Cadastre-se</a></p>
+</div>
+
+<script>
+    // Exibe mensagens com base nos parâmetros da URL (erro ou logout)
+    document.addEventListener('DOMContentLoaded', function() {
+      const params = new URLSearchParams(window.location.search);
+      const messageArea = document.getElementById('messageArea');
+
+      if (params.has('error')) {
+        messageArea.textContent = 'Email ou senha inválidos. Tente novamente.';
+        messageArea.style.color = 'red';
+      }
+      if (params.has('logout')) {
+        messageArea.textContent = 'Você saiu com sucesso.';
+        messageArea.style.color = 'green';
+      }
+    });
+</script>
+
+</body>
+</html>
