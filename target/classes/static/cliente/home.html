@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Home - BookSwap</title>
+    <link rel="stylesheet" href="../style/style.css" />
+    <style>
+        /* NAVBAR LATERAL */
+        .side-navbar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 220px;
+          height: 100vh;
+          background-color: #fff;
+          border-right: 2px solid #eee;
+          padding-top: 30px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+          z-index: 100;
+        }
+
+        .side-navbar .logo img {
+          width: 120px;
+          height: auto;
+          margin-bottom: 40px;
+        }
+
+        .side-navbar ul {
+          list-style: none;
+          padding: 0;
+          width: 100%;
+          text-align: center;
+        }
+
+        .side-navbar ul li {
+          margin-bottom: 20px;
+        }
+
+        .side-navbar ul li a {
+          display: block;
+          padding: 12px;
+          color: #333;
+          font-weight: bold;
+          text-decoration: none;
+          transition: background-color 0.2s, color 0.2s;
+        }
+
+        .side-navbar ul li a:hover {
+          background-color: #f9f9f9;
+          color: #d9534f;
+        }
+
+        .side-navbar ul li a.active {
+          background-color: #ffe8e6;
+          color: #d9534f;
+          border-left: 4px solid #d9534f;
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .content-wrapper {
+          margin-left: 220px;
+          padding: 40px 30px;
+        }
+
+        .section-title {
+          font-size: 24px;
+          font-weight: bold;
+          color: #d9534f;
+          margin-bottom: 20px;
+        }
+
+        .livros-container {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 20px;
+        }
+
+        .livro-card {
+          background-color: #fff;
+          border: 1px solid #ddd;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .livro-card h3 {
+          margin-top: 0;
+          color: #c9302c;
+        }
+
+        .livro-card p {
+          margin: 5px 0;
+          font-size: 14px;
+          color: #555;
+        }
+
+        .placeholder-livros {
+          background-color: #f0f0f0;
+          padding: 40px;
+          border-radius: 8px;
+          border: 1px dashed #bbb;
+          color: #666;
+          text-align: center;
+          font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR LATERAL -->
+<nav class="side-navbar">
+    <div class="logo">
+        <a href="/cliente/home.html">
+            <img src="../Image/logo-png.png" alt="Book Swap Logo">
+        </a>
+    </div>
+    <ul>
+        <li><a href="home.html" class="active">Todos os Livros</a></li>
+        <li><a href="meus_livros.html">Meus Livros</a></li>
+        <li><a href="perfis.html">Meu perfil</a></li>
+        <li><a href="troca.html">Troca</a></li>
+        <li>
+            <form id="logoutForm" method="POST" action="/logout">
+                <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;">Sair</a>
+            </form>
+        </li>
+    </ul>
+</nav>
+
+<!-- CONTEÚDO -->
+<div class="content-wrapper">
+    <h1 class="section-title">Todos os Livros</h1>
+
+    <div id="livrosContainer" class="livros-container">
+        <div class="placeholder-livros">Carregando livros do banco de dados...</div>
+    </div>
+</div> <!-- fecha .content-wrapper -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", async function () { // Tornar async
+      const container = document.getElementById("livrosContainer");
+      try {
+        // É importante saber o ID do usuário logado para não mostrar "Propor Troca" para os próprios livros.
+        // Uma forma de obter isso seria uma chamada a um endpoint /api/usuarios/me (que retorna dados do usuário logado).
+        // Para simplificar AGORA, vamos adicionar o botão a todos e o backend validará.
+        // let usuarioLogadoId = null;
+        // try {
+        //   const userResp = await fetch("/api/auth/me"); // Exemplo de endpoint para dados do usuário
+        //   if (userResp.ok) {
+        //     const userData = await userResp.json();
+        //     if (userData && userData.id) usuarioLogadoId = userData.id;
+        //   }
+        // } catch(e) { console.warn("Não foi possível obter dados do usuário logado:", e); }
+
+
+        const response = await fetch("/api/livros"); // GET /api/livros (que usa JOIN FETCH)
+        if (!response.ok) {
+          throw new Error("Erro na requisição ao buscar todos os livros.");
+        }
+        const livros = await response.json();
+
+        if (!livros || livros.length === 0) {
+          container.innerHTML = "<div class='placeholder-livros'>Nenhum livro cadastrado ainda.</div>";
+          return;
+        }
+
+        let html = livros.map(livro => {
+          let proporTrocaBotaoHtml = '';
+          // A validação se o livro é do próprio usuário ou está indisponível deve ser feita
+          // ANTES de mostrar o botão. Idealmente, o backend /api/livros já não listaria
+          // livros indisponíveis para troca ou daria um flag.
+          // Para a simplificação do demo, o backend PropostaTrocaService vai validar.
+          // Se o livro estiver disponível E (idealmente) não pertencer ao usuário logado:
+          if (livro.disponivel) {
+            // if (usuarioLogadoId && livro.proprietario && livro.proprietario.id === usuarioLogadoId) {
+            //    proporTrocaBotaoHtml = '<p><em>Este é um dos seus livros.</em></p>';
+            // } else {
+                 proporTrocaBotaoHtml = `<button class="btn-propor-troca" onclick="iniciarProposta(${livro.id}, '${encodeURIComponent(livro.titulo)}')">Propor Troca</button>`;
+            // }
+          } else {
+            proporTrocaBotaoHtml = '<p><em>Indisponível para troca no momento.</em></p>';
+          }
+
+          return `
+            <div class="livro-card">
+              <h3>${livro.titulo || 'N/A'}</h3>
+              <p><strong>Autor:</strong> ${livro.autor || 'N/A'}</p>
+              <p><strong>ISBN/Código:</strong> ${livro.isbn || 'N/A'}</p>
+              <p><strong>Disponível:</strong> ${livro.disponivel ? "Sim" : "Não"}</p>
+              ${livro.proprietario && livro.proprietario.nome ? `<p><strong>Proprietário:</strong> ${livro.proprietario.nome}</p>` : '<p><strong>Proprietário:</strong> N/A</p>'}
+              ${proporTrocaBotaoHtml}
+            </div>
+          `;
+        }).join("");
+        container.innerHTML = html;
+      } catch (err) {
+        console.error("Erro ao carregar livros na home:", err);
+        container.innerHTML = "<div class='placeholder-livros' style='color:red;'>Erro ao carregar livros. Tente novamente mais tarde.</div>";
+      }
+    });
+
+    function iniciarProposta(livroDesejadoId, livroDesejadoTitulo) {
+      // Redireciona para a página de troca, passando os dados do livro desejado via query params
+      window.location.href = `/cliente/troca.html?livroDesejadoId=${livroDesejadoId}&livroDesejadoTitulo=${livroDesejadoTitulo}`;
+    }
+</script>
+
+</body>
+</html>

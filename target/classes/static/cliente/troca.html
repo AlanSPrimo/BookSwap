@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minhas Trocas - BookSwap</title>
+  <link rel="stylesheet" href="../style/style.css"> <style>
+  /* Estilos básicos para a página de trocas (ajuste conforme seu style.css) */
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
+  .navbar { background-color: #fff; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+  .navbar .logo { font-size: 24px; font-weight: bold; color: #d9534f; text-decoration: none; } /* Cor do seu tema */
+  .navbar .nav-links a { color: #606770; text-decoration: none; margin-left: 20px; font-size: 16px; }
+  .navbar .nav-links a:hover, .navbar .nav-links a.active { color: #d9534f; font-weight: bold; } /* Cor do seu tema */
+  .navbar .nav-links form { display: inline; margin-left: 20px; }
+  .navbar .nav-links form a { font-size: 16px; }
+
+  .container { padding: 30px; max-width: 900px; margin: 20px auto; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .container h1 { color: #1c1e21; margin-bottom: 20px; }
+  .tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
+  .tab-button { padding: 10px 20px; cursor: pointer; border: none; background: none; font-size: 16px; outline: none; }
+  .tab-button.active { color: #d9534f; border-bottom: 2px solid #d9534f; font-weight: bold;} /* Cor do seu tema */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .trade-list { list-style: none; padding: 0; }
+  .trade-item { background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 6px; }
+  .trade-item h3 { margin: 0 0 10px 0; font-size: 18px;}
+  .trade-item p { margin: 5px 0; font-size: 14px; }
+  .trade-item .status-pendente { color: #ffc107; font-weight: bold; }
+  .trade-item .status-aceita { color: #28a745; font-weight: bold; }
+  .trade-item .status-rejeitada { color: #dc3545; font-weight: bold; }
+  .trade-item .status-cancelada { color: #6c757d; font-weight: bold; }
+  .trade-item .status-concluida { color: #17a2b8; font-weight: bold; }
+  .trade-item .actions button { margin-top:10px; margin-right: 5px; padding: 8px 12px; border:none; border-radius:4px; cursor:pointer; font-size: 14px;}
+
+  /* Usar classes de botões do seu style.css se possível, ou defina-as aqui */
+  .btn-success { background-color: #28a745; color:white; }
+  .btn-danger { background-color: #dc3545; color:white; }
+  .btn-info { background-color: #17a2b8; color:white; } /* Este era o "Conversar", pode ser removido ou reutilizado */
+  .btn-secondary { background-color: #6c757d; color:white; }
+  .btn-primary { background-color: #d9534f; color:white; } /* Botão principal do seu tema */
+
+  #novaPropostaSection { display: none; margin-bottom: 30px; padding: 20px; background-color: #f0f0f0; border: 1px solid #e0e0e0; border-radius: 8px; }
+  #novaPropostaSection h2 { margin-top: 0; color: #333; }
+  #novaPropostaSection label { display: block; margin-bottom: 5px; font-weight: bold; }
+  #novaPropostaSection select, #novaPropostaSection button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+  }
+  #novaPropostaSection button {
+      background-color: #d9534f; /* Cor principal */
+      color: white;
+      cursor: pointer;
+  }
+  #novaPropostaSection button:hover {
+      background-color: #c9302c;
+  }
+
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/cliente/home.html" class="logo">BookSwap</a>
+  <div class="nav-links">
+    <a href="/cliente/home.html">Todos os Livros</a>
+    <a href="/cliente/meus_livros.html">Meus Livros</a>
+    <a href="/cliente/perfis.html">Meu Perfil</a>
+    <a href="/cliente/troca.html" class="active">Trocas</a>
+    <form id="logoutFormPage" method="POST" action="/logout" style="display: inline;">
+      <a href="#" onclick="document.getElementById('logoutFormPage').submit(); return false;">Sair</a>
+    </form>
+  </div>
+</nav>
+
+<div class="container">
+  <div id="novaPropostaSection">
+    <h2>Iniciar Nova Proposta de Troca</h2>
+    <p><strong>Livro Desejado:</strong> <span id="livroDesejadoInfoCapa">Carregando...</span></p>
+    <input type="hidden" id="livroDesejadoIdHiddenCapa">
+
+    <div>
+      <label for="selectLivroOfertadoCapa">Selecione um dos seus livros para ofertar:</label>
+      <select id="selectLivroOfertadoCapa"></select>
+    </div>
+    <button id="btnEnviarPropostaCapa" class="btn-primary">Enviar Proposta</button>
+    <div id="novaPropostaMensagemCapa" style="margin-top: 10px;"></div>
+  </div>
+
+  <h1>Minhas Trocas</h1>
+
+  <div class="tabs">
+    <button class="tab-button active" onclick="openTab(event, 'propostasRecebidas')">Propostas Recebidas</button>
+    <button class="tab-button" onclick="openTab(event, 'propostasEnviadas')">Propostas Enviadas</button>
+    <button class="tab-button" onclick="openTab(event, 'historicoTrocas')">Histórico</button>
+  </div>
+
+  <div id="propostasRecebidas" class="tab-content active">
+    <h2>Propostas Recebidas</h2>
+    <ul class="trade-list">
+      <li>Carregando propostas recebidas...</li>
+    </ul>
+  </div>
+
+  <div id="propostasEnviadas" class="tab-content">
+    <h2>Propostas Enviadas</h2>
+    <ul class="trade-list">
+      <li>Carregando propostas enviadas...</li>
+    </ul>
+  </div>
+
+  <div id="historicoTrocas" class="tab-content">
+    <h2>Histórico de Trocas</h2>
+    <ul class="trade-list">
+      <li>Carregando histórico de trocas...</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const novaPropostaSectionEl = document.getElementById('novaPropostaSection');
+  const livroDesejadoInfoSpanEl = document.getElementById('livroDesejadoInfoCapa');
+  const livroDesejadoIdHiddenInputEl = document.getElementById('livroDesejadoIdHiddenCapa');
+  const selectLivroOfertadoEl = document.getElementById('selectLivroOfertadoCapa');
+  const btnEnviarPropostaEl = document.getElementById('btnEnviarPropostaCapa');
+  const novaPropostaMensagemDivEl = document.getElementById('novaPropostaMensagemCapa');
+
+  function openTab(evt, tabName) {
+      let i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tab-content");
+      for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+          tabcontent[i].classList.remove("active");
+      }
+      tablinks = document.getElementsByClassName("tab-button");
+      for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].classList.remove("active");
+      }
+      document.getElementById(tabName).style.display = "block";
+      document.getElementById(tabName).classList.add("active");
+      if(evt && evt.currentTarget) { // evt pode ser nulo se chamado programaticamente
+        evt.currentTarget.classList.add("active");
+      }
+
+
+      // Carregar dados da aba selecionada
+      if (tabName === 'propostasRecebidas') {
+          carregarPropostasRecebidas();
+      } else if (tabName === 'propostasEnviadas') {
+          carregarPropostasEnviadas();
+      } else if (tabName === 'historicoTrocas') {
+          carregarHistoricoTrocas();
+      }
+  }
+
+  async function carregarDadosComuns(endpoint, containerId, mensagemVazio, renderFunction) {
+    const container = document.getElementById(containerId).querySelector('.trade-list');
+    if (!container) {
+        console.error(`Container .trade-list não encontrado para ${containerId}`);
+        return;
+    }
+    container.innerHTML = `<li>Carregando...</li>`;
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        let errorMsg = `Erro ao carregar dados de ${endpoint}.`;
+        try {
+            const err = await response.json();
+            if (err && err.mensagem) errorMsg = err.mensagem;
+        } catch(e) {/* não faz nada se não for json */}
+        throw new Error(errorMsg);
+      }
+      const propostas = await response.json();
+      container.innerHTML = '';
+      if (!propostas || propostas.length === 0) {
+        container.innerHTML = `<li>${mensagemVazio}</li>`;
+        return;
+      }
+      propostas.forEach(p => renderFunction(p, container));
+    } catch (error) {
+      console.error(`Erro em ${endpoint}:`, error);
+      container.innerHTML = `<li><p style="color:red;">${error.message}</p></li>`;
+    }
+  }
+
+  function renderPropostaRecebida(p, container) {
+    const item = document.createElement('li');
+    item.className = 'trade-item';
+    item.innerHTML = `
+      <h3>Proposta de ${p.propositor.nome || 'N/A'}</h3>
+      <p><strong>Oferece:</strong> "${p.livroOfertado.titulo || 'N/A'}" (ID: ${p.livroOfertado.id})</p>
+      <p><strong>Pelo seu livro:</strong> "${p.livroDesejado.titulo || 'N/A'}" (ID: ${p.livroDesejado.id})</p>
+      <p><strong>Data:</strong> ${new Date(p.dataProposta).toLocaleDateString()}</p>
+      <p>Status: <span class="status-${p.status.toLowerCase()}">${p.status}</span></p>
+      ${p.status === 'PENDENTE' ? `
+        <div class="actions">
+          <button class="btn-success" onclick="responderProposta(${p.id}, 'aceitar', 'recebidas')">Aceitar</button>
+          <button class="btn-danger" onclick="responderProposta(${p.id}, 'rejeitar', 'recebidas')">Rejeitar</button>
+        </div>
+      ` : ''}
+    `;
+    container.appendChild(item);
+  }
+
+  function renderPropostaEnviada(p, container) {
+    const item = document.createElement('li');
+    item.className = 'trade-item';
+    item.innerHTML = `
+      <h3>Proposta para ${p.receptor.nome || 'N/A'}</h3>
+      <p><strong>Você oferece:</strong> "${p.livroOfertado.titulo || 'N/A'}" (ID: ${p.livroOfertado.id})</p>
+      <p><strong>Pelo livro:</strong> "${p.livroDesejado.titulo || 'N/A'}" (ID: ${p.livroDesejado.id})</p>
+      <p><strong>Data:</strong> ${new Date(p.dataProposta).toLocaleDateString()}</p>
+      <p>Status: <span class="status-${p.status.toLowerCase()}">${p.status}</span></p>
+      ${p.status === 'PENDENTE' ? `
+        <div class="actions">
+          <button class="btn-secondary" onclick="responderProposta(${p.id}, 'cancelar', 'enviadas')">Cancelar Proposta</button>
+        </div>
+      ` : ''}
+      ${p.status === 'ACEITA' ? `
+        <div class="actions">
+          <button class="btn-primary" onclick="responderProposta(${p.id}, 'concluir', 'enviadas')">Concluir Troca</button>
+        </div>
+      ` : ''}
+    `;
+    container.appendChild(item);
+  }
+
+  function renderHistorico(p, container) {
+     const item = document.createElement('li');
+    item.className = 'trade-item';
+    item.innerHTML = `
+      <h3>Troca com ${p.propositor.nome === 'SEU_NOME_AQUI_OU_IDENTIFICADOR' ? p.receptor.nome : p.propositor.nome}</h3> <p><strong>Livro Ofertado por Você/Outro:</strong> "${p.livroOfertado.titulo}"</p>
+      <p><strong>Livro Desejado por Você/Outro:</strong> "${p.livroDesejado.titulo}"</p>
+      <p><strong>Data da Proposta:</strong> ${new Date(p.dataProposta).toLocaleDateString()}</p>
+      <p><strong>Última Atualização:</strong> ${new Date(p.dataAtualizacaoStatus).toLocaleDateString()}</p>
+      <p>Status Final: <span class="status-${p.status.toLowerCase()}">${p.status}</span></p>
+    `;
+    container.appendChild(item);
+  }
+
+  function carregarPropostasRecebidas() {
+    carregarDadosComuns('/api/trocas/recebidas', 'propostasRecebidas', 'Nenhuma proposta recebida pendente.', renderPropostaRecebida);
+  }
+  function carregarPropostasEnviadas() {
+    carregarDadosComuns('/api/trocas/enviadas', 'propostasEnviadas', 'Nenhuma proposta enviada.', renderPropostaEnviada);
+  }
+  function carregarHistoricoTrocas() {
+     carregarDadosComuns('/api/trocas/historico', 'historicoTrocas', 'Nenhum histórico de trocas.', renderHistorico);
+  }
+
+  async function responderProposta(propostaId, acao, origem) { // origem: 'recebidas', 'enviadas'
+    let endpoint = `/api/trocas/${propostaId}/${acao}`;
+    let successMessage = `Proposta ${acao}!`;
+    if (acao === 'aceitar') successMessage = 'Proposta aceita!';
+    else if (acao === 'rejeitar') successMessage = 'Proposta rejeitada.';
+    else if (acao === 'cancelar') successMessage = 'Proposta cancelada.';
+    else if (acao === 'concluir') successMessage = 'Troca concluída com sucesso!';
+
+    try {
+      const response = await fetch(endpoint, { method: 'POST' });
+      const resultado = await response.json();
+
+      if (!response.ok) {
+        throw new Error(resultado.mensagem || `Erro ao processar a ação: ${acao}.`);
+      }
+      alert(resultado.mensagem || successMessage);
+
+      // Recarregar a aba relevante e potencialmente outras
+      if(origem === 'recebidas') {
+        carregarPropostasRecebidas();
+      } else if (origem === 'enviadas') {
+        carregarPropostasEnviadas();
+        if(acao === 'concluir' || acao === 'cancelar') { // Se afeta o histórico
+            carregarHistoricoTrocas();
+            // Se cancelar/concluir uma troca também afeta a lista de livros do usuário (disponibilidade),
+            // você pode querer atualizar essa lista também, se ela estiver visível ou for ser acessada.
+            // Ex: if (typeof carregarMeusLivros === 'function') carregarMeusLivros();
+        }
+      }
+
+    } catch (error) {
+      console.error(`Erro ao ${acao} proposta ${propostaId}:`, error);
+      alert(error.message);
+    }
+  }
+
+  async function carregarLivrosDoUsuarioParaOferta() {
+    selectLivroOfertadoEl.innerHTML = '<option value="">Carregando seus livros...</option>';
+    try {
+      const response = await fetch('/api/livros/meus/disponiveis');
+      if (!response.ok) {
+        throw new Error('Não foi possível carregar seus livros para oferta.');
+      }
+      const livrosDisponiveis = await response.json();
+      selectLivroOfertadoEl.innerHTML = '<option value="">-- Selecione seu livro --</option>';
+      if (!livrosDisponiveis || livrosDisponiveis.length === 0) {
+        selectLivroOfertadoEl.innerHTML = '<option value="">Você não tem livros disponíveis para ofertar.</option>';
+        selectLivroOfertadoEl.disabled = true;
+        btnEnviarPropostaEl.disabled = true;
+      } else {
+        livrosDisponiveis.forEach(livro => {
+          const option = document.createElement('option');
+          option.value = livro.id;
+          option.textContent = `${livro.titulo} (Autor: ${livro.autor || 'N/A'})`;
+          selectLivroOfertadoEl.appendChild(option);
+        });
+        selectLivroOfertadoEl.disabled = false;
+        btnEnviarPropostaEl.disabled = false;
+      }
+    } catch (error) {
+      console.error("Erro ao carregar livros do usuário para oferta:", error);
+      selectLivroOfertadoEl.innerHTML = `<option value="">${error.message}</option>`;
+      selectLivroOfertadoEl.disabled = true;
+      btnEnviarPropostaEl.disabled = true;
+    }
+  }
+
+  async function enviarPropostaCapa() {
+    const livroOfertadoId = selectLivroOfertadoEl.value;
+    const livroDesejadoId = livroDesejadoIdHiddenInputEl.value;
+
+    if (!livroOfertadoId) {
+      novaPropostaMensagemDivEl.innerHTML = '<p style="color:red;">Por favor, selecione um livro para ofertar.</p>';
+      return;
+    }
+    if (!livroDesejadoId) {
+      novaPropostaMensagemDivEl.innerHTML = '<p style="color:red;">Erro: Livro desejado não identificado.</p>';
+      return;
+    }
+
+    novaPropostaMensagemDivEl.innerHTML = '<p>Enviando proposta...</p>';
+    btnEnviarPropostaEl.disabled = true;
+
+    try {
+      const response = await fetch('/api/trocas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ livroOfertadoId: parseInt(livroOfertadoId), livroDesejadoId: parseInt(livroDesejadoId) })
+      });
+      const resultado = await response.json();
+
+      if (!response.ok) {
+        throw new Error(resultado.mensagem || 'Erro ao enviar proposta.');
+      }
+
+      novaPropostaMensagemDivEl.innerHTML = `<p style="color:green;">${resultado.mensagem || 'Proposta enviada com sucesso!'}</p>`;
+      setTimeout(() => {
+        novaPropostaSectionEl.style.display = 'none';
+        selectLivroOfertadoEl.value = '';
+        // Remove os query params da URL para não reabrir esta seção se o usuário atualizar a página
+        window.history.replaceState({}, document.title, window.location.pathname);
+        openTab(null, 'propostasEnviadas');
+      }, 2000);
+
+    } catch (error) {
+      console.error("Erro ao enviar proposta:", error);
+      novaPropostaMensagemDivEl.innerHTML = `<p style="color:red;">${error.message}</p>`;
+    } finally {
+      btnEnviarPropostaEl.disabled = false;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const livroDesejadoIdParam = params.get('livroDesejadoId');
+    const livroDesejadoTituloParam = params.get('livroDesejadoTitulo');
+
+    if (livroDesejadoIdParam && livroDesejadoTituloParam) {
+      novaPropostaSectionEl.style.display = 'block';
+      livroDesejadoInfoSpanEl.textContent = decodeURIComponent(livroDesejadoTituloParam);
+      livroDesejadoIdHiddenInputEl.value = livroDesejadoIdParam;
+      carregarLivrosDoUsuarioParaOferta();
+      btnEnviarPropostaEl.onclick = enviarPropostaCapa;
+    }
+
+    const firstTabButton = document.querySelector('.tab-button'); // Primeiro botão de aba
+    const activeTabButton = document.querySelector('.tab-button.active');
+
+    if (activeTabButton && !livroDesejadoIdParam) { // Se já tem uma aba ativa e não veio para nova proposta
+        const tabName = activeTabButton.getAttribute('onclick').match(/openTab\(event, '([^']*)'\)/)[1];
+        openTab({currentTarget: activeTabButton}, tabName);
+    } else if (firstTabButton && !livroDesejadoIdParam) { // Senão, e não veio para nova proposta, abre a primeira
+        openTab({currentTarget: firstTabButton}, 'propostasRecebidas');
+    }
+    // Se veio para nova proposta, nenhuma aba é carregada inicialmente, o foco é na seção de nova proposta.
+  });
+</script>
+
+</body>
+</html>

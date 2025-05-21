@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meus Livros - BookSwap</title>
+  <link rel="stylesheet" href="../style/style.css" />
+  <style>
+    /* Estilos da barra lateral e conteúdo (reaproveitados/ajustados conforme necessário) */
+    .side-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 220px;
+      height: 100vh;
+      background-color: #fff;
+      border-right: 2px solid #eee;
+      padding-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+      z-index: 100; /* Para garantir que a navbar lateral fique acima de outros elementos se houver sobreposição */
+    }
+
+    .side-navbar .logo img {
+      width: 120px; /* Ajuste conforme o tamanho do seu logo */
+      margin-bottom: 40px;
+    }
+
+    .side-navbar ul {
+      list-style: none;
+      padding: 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    .side-navbar ul li {
+      margin-bottom: 20px;
+    }
+
+    .side-navbar ul li a {
+      display: block;
+      padding: 12px;
+      color: #333;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .side-navbar ul li a:hover {
+      background-color: #f9f9f9;
+      color: #d9534f; /* Cor de destaque do seu tema */
+    }
+
+    .side-navbar ul li a.active {
+      background-color: #ffe8e6; /* Cor de fundo para item ativo */
+      color: #d9534f; /* Cor do texto para item ativo */
+      border-left: 4px solid #d9534f; /* Destaque lateral para item ativo */
+    }
+
+    .content-wrapper {
+      margin-left: 220px; /* Mesmo tamanho da largura da side-navbar */
+      padding: 40px 30px;
+      /* background-color: #f4f6f8; /* Um fundo suave para a área de conteúdo */
+      /* min-height: 100vh; /* Garante que o wrapper ocupe toda a altura */
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #d9534f; /* Cor de destaque */
+      margin-bottom: 20px;
+    }
+
+    .add-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .add-button {
+      background-color: #d9534f;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 28px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: background-color 0.2s;
+    }
+    .add-button:hover {
+        background-color: #c9302c; /* Tom mais escuro no hover */
+    }
+
+    #livrosUsuarioContainer { /* Alterado de #livrosUsuario para corresponder ao JS */
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Layout em grade responsivo */
+        gap: 20px;
+    }
+
+    .livro-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      /* margin-bottom: 20px; */ /* Não é mais necessário com grid gap */
+    }
+
+    .livro-card h3 {
+      margin-top: 0;
+      color: #c9302c; /* Cor de destaque para o título do livro */
+    }
+
+    .livro-card p {
+      margin: 8px 0; /* Espaçamento vertical entre parágrafos */
+      font-size: 14px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .sem-livros {
+      font-style: italic;
+      color: #888;
+      text-align: center;
+      padding: 20px;
+      grid-column: 1 / -1; /* Faz ocupar toda a largura da grade se for o único item */
+    }
+
+    /* Estilos do MODAL */
+    .modal-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.5); /* Fundo semi-transparente */
+      display: none; /* Escondido por padrão */
+      justify-content: center;
+      align-items: center;
+      z-index: 1000; /* Garante que o modal fique acima de outros elementos */
+    }
+
+    .modal {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 450px; /* Largura máxima do modal */
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .modal h2 {
+      margin-top: 0;
+      margin-bottom: 25px; /* Espaço abaixo do título do modal */
+      color: #d9534f;
+      text-align: center;
+      font-size: 22px;
+    }
+
+    .modal label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px; /* Espaço entre label e input */
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .modal input[type="text"],
+    .modal input[type="number"] { /* Mantido type number caso use para outros campos no futuro */
+      width: 100%;
+      padding: 12px; /* Padding maior para melhor toque/clique */
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+    .modal input[type="checkbox"] {
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .modal label.checkbox-label { /* Para alinhar o texto do checkbox */
+        font-weight: normal;
+        display: inline-flex;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+
+    .modal .btn-confirm {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      background-color: #d9534f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .modal .btn-confirm:hover {
+        background-color: #c9302c;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px; right: 15px;
+      background: none;
+      border: none;
+      font-size: 24px; /* Botão de fechar maior */
+      cursor: pointer;
+      color: #888;
+    }
+    .close-btn:hover {
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="side-navbar">
+  <div class="logo">
+    <a href="/cliente/home.html">
+      <img src="../Image/logo-png.png" alt="Book Swap Logo">
+    </a>
+  </div>
+  <ul>
+    <li><a href="home.html">Todos os Livros</a></li>
+    <li><a href="meus_livros.html" class="active">Meus Livros</a></li>
+    <li><a href="perfis.html">Meu perfil</a></li>
+    <li><a href="troca.html">Troca</a></li>
+    <li>
+      <form id="logoutForm" method="POST" action="/logout">
+        <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;">Sair</a>
+      </form>
+    </li>
+  </ul>
+</nav>
+
+<div class="content-wrapper">
+  <h1 class="section-title">Meus Livros</h1>
+
+  <div class="add-area">
+    <button class="add-button" onclick="abrirModal()">+</button>
+    <span style="font-weight: bold; color: #333;">Adicionar Novo Livro</span>
+  </div>
+
+  <div id="livrosUsuarioContainer">
+  </div>
+</div>
+
+<div class="modal-bg" id="modalAdicionar">
+  <div class="modal">
+    <button class="close-btn" onclick="fecharModal()">×</button>
+    <h2>Adicionar Livro</h2>
+    <form id="formAdicionarLivro">
+      <label for="titulo">Título</label>
+      <input type="text" id="titulo" placeholder="Título do livro" required />
+
+      <label for="autor">Autor</label>
+      <input type="text" id="autor" placeholder="Nome do autor" required/>
+
+      <label for="isbn">ISBN</label>
+      <input type="text" id="isbn" placeholder="ISBN do livro (ex: 978-3-16-148410-0)" required/>
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="disponivel" checked /> Disponível para troca/empréstimo
+      </label>
+
+      <button type="button" class="btn-confirm" onclick="adicionarLivro()">ADICIONAR</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function abrirModal() {
+    document.getElementById("modalAdicionar").style.display = "flex";
+  }
+
+  function fecharModal() {
+    document.getElementById("modalAdicionar").style.display = "none";
+    document.getElementById("formAdicionarLivro").reset();
+  }
+
+  function adicionarLivro() {
+    const livro = {
+      titulo: document.getElementById("titulo").value.trim(),
+      autor: document.getElementById("autor").value.trim(),
+      isbn: document.getElementById("isbn").value.trim(),
+      disponivel: document.getElementById("disponivel").checked
+    };
+
+    if (!livro.titulo || !livro.autor || !livro.isbn) {
+        alert("Por favor, preencha título, autor e ISBN.");
+        return;
+    }
+
+    fetch("/api/livros", { // Endpoint de POST para adicionar livro
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // O Spring Security com formLogin geralmente lida com CSRF automaticamente para POSTs.
+        // Se CSRF estivesse habilitado de forma customizada, um token CSRF seria necessário aqui.
+      },
+      body: JSON.stringify(livro)
+    })
+    .then(async resp => {
+      if (!resp.ok) {
+        let errorData;
+        try {
+          errorData = await resp.json();
+        } catch (e) {
+          console.error("Resposta de erro não era JSON ou corpo nulo:", resp.status);
+          throw new Error(`Erro ${resp.status} ao adicionar livro. Verifique o console do servidor para mais detalhes.`);
+        }
+
+        let detailedMessage = `Erro ${resp.status}`;
+        if (errorData) {
+            if (errorData.mensagem) {
+                detailedMessage = errorData.mensagem;
+                if (errorData.dados && typeof errorData.dados === 'object') {
+                    detailedMessage += ": " + JSON.stringify(errorData.dados);
+                } else if (errorData.dados) {
+                     detailedMessage += ": " + errorData.dados;
+                }
+            } else if (errorData.error) {
+                 detailedMessage = errorData.error + (errorData.message ? " - " + errorData.message : "");
+            } else if (typeof errorData === 'string') {
+                detailedMessage = errorData;
+            }
+        }
+        throw new Error(detailedMessage);
+      }
+      return resp.json();
+    })
+    .then(novoLivro => {
+      alert("Livro adicionado com sucesso!");
+      fecharModal();
+      carregarMeusLivros(); // Atualiza a lista de livros do usuário
+    })
+    .catch(err => {
+      console.error("Falha ao adicionar livro:", err);
+      alert(err.message || "Ocorreu um erro desconhecido ao adicionar o livro. Verifique o console.");
+    });
+  }
+
+  async function carregarMeusLivros() {
+    const container = document.getElementById("livrosUsuarioContainer");
+    try {
+      const response = await fetch("/api/livros/meus"); // Endpoint específico para livros do usuário
+      if (!response.ok) {
+        let errorMsg = "Erro ao carregar seus livros.";
+        if (response.status === 401) {
+            errorMsg = "Sessão expirada ou não autorizado. Faça login novamente.";
+            // Opcional: redirecionar para login ou mostrar mensagem mais proeminente.
+        } else {
+            try {
+                const errData = await response.json();
+                if (errData && errData.mensagem) errorMsg = errData.mensagem;
+                else if (errData && errData.error) errorMsg = errData.error;
+            } catch (e) { /* Não faz nada se não for JSON, mantém a msg padrão */ }
+        }
+        throw new Error(errorMsg);
+      }
+
+      const livros = await response.json();
+      container.innerHTML = ""; // Limpa o conteúdo anterior
+
+      if (!livros || livros.length === 0) {
+          container.innerHTML = "<p class='sem-livros'>Você ainda não cadastrou nenhum livro.</p>";
+          return;
+      }
+
+      livros.forEach(livro => {
+        const card = document.createElement("div");
+        card.className = "livro-card";
+        card.innerHTML = `
+          <h3>${livro.titulo || 'Título não disponível'}</h3>
+          <p><strong>Autor:</strong> ${livro.autor || 'Autor não disponível'}</p>
+          <p><strong>ISBN:</strong> ${livro.isbn || 'ISBN não disponível'}</p>
+          <p><strong>Disponível para troca:</strong> ${livro.disponivel ? "Sim" : "Não"}</p>
+          `;
+        container.appendChild(card);
+      });
+
+    } catch (error) {
+      console.error("Erro ao buscar 'meus livros':", error);
+      container.innerHTML = `<p class'sem-livros' style='color:red;'>${error.message}</p>`;
+    }
+  }
+
+  // Chamar carregarMeusLivros quando a página carregar
+  window.onload = function() {
+    carregarMeusLivros();
+  };
+</script>
+
+</body>
+</html>
